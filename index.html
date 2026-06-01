@@ -4957,11 +4957,48 @@ function activarConCodigo(origen){var inputId=origen==='trial'?'trial-codigo':'b
 // IMAGEN PRODUCTO — Open Food Facts + Google
 // ================================================================
 
+function buscarImagenProducto(){
+  var cod=el('mp-cod').value.trim(), nom=el('mp-nom').value.trim();
+  if(cod){
+    fetch('https://world.openfoodfacts.org/api/v0/product/'+cod+'.json')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.status===1&&d.product.image_url) setImagenProducto(d.product.image_url);
+      else if(nom) abrirGoogleImagenes();
+      else alert('No encontrado. Usa Buscar en Google.');
+    }).catch(function(){ if(nom) abrirGoogleImagenes(); });
+  } else if(nom){ abrirGoogleImagenes(); }
+  else{ alert('Ingresa código o nombre primero.'); }
+}
 
+function abrirGoogleImagenes(){
+  var nom=el('mp-nom').value.trim();
+  if(!nom){alert('Ingresa el nombre primero.');return;}
+  window.open('https://www.google.com/search?tbm=isch&q='+encodeURIComponent(nom),'_blank');
+  setTimeout(function(){
+    var url=prompt('Copia la URL de la imagen y pégala aquí:');
+    if(url&&url.startsWith('http')) setImagenProducto(url);
+  },2000);
+}
 
+function setImagenProducto(url){
+  var prev=el('mp-img-preview'), tag=el('mp-img-tag'), inp=el('mp-img-url');
+  if(inp) inp.value=url;
+  if(prev&&tag){tag.src=url;prev.style.display='flex';}
+}
 
+function quitarImagenProducto(){
+  var prev=el('mp-img-preview'), inp=el('mp-img-url');
+  if(inp) inp.value='';
+  if(prev) prev.style.display='none';
+}
 
-
+function previsualizarImg(){
+  var url=(el('mp-img')||{value:''}).value.trim();
+  var prev=el('mp-img-prev'), thumb=el('mp-img-thumb');
+  if(url&&prev&&thumb){thumb.src=url;prev.style.display='block';}
+  else if(prev) prev.style.display='none';
+}
 
 </script>
 
