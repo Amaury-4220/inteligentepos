@@ -2150,8 +2150,7 @@ function save() {
   try { localStorage.setItem('vania_v3', JSON.stringify(S)); } catch(e) {}
   // Si Firebase, también sincronizar
   if (FB_MODE === 'firebase' && db) {
-    db.ref('posData').set(S).catch(function(err){
-      console.warn('Firebase save error:', err);
+   db.ref(_NEG ? 'negocios/'+_NEG.id+'/posData' : 'posData').set(S).catch(function(err){      console.warn('Firebase save error:', err);
       setFbStatus('⚠ Error sync', 'rgba(245,158,11,.8)');
     });
   }
