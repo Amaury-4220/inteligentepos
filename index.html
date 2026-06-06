@@ -2961,8 +2961,7 @@ function confirmarCobro() {
     else if(it.gramos>0){ var pg=S.prods.find(function(x){return x.cod===it.cod;}); if(pg){pg.stock=Math.max(0,pg.stock-it.gramos);} }
   });
 
-  var venta={folio:S.folio++,fecha:hoy(),hora:ahora_(),items:S.ticket.slice(),total:total,pago:pagoTipo,user:S.user,iva:iva,pendiente:pagoTipo==='credito'};
-  S.hist.push(venta);
+  var venta={folio:S.folio++,fecha:hoy(),hora:ahora_(),ts:Date.now(),items:S.ticket.slice(),total:total,pago:pagoTipo,user:S.user,iva:iva,pendiente:pagoTipo==='credito'};  S.hist.push(venta);
   S.trans++;
 
   if(pagoTipo==='credito'){
