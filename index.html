@@ -178,7 +178,6 @@ body{background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direc
 .sug{padding:8px 12px;cursor:pointer;border-bottom:1px solid var(--border);font-size:12px}
 .sug:hover{background:var(--bg)}.sug b{display:block}.sug span{color:var(--muted);font-size:11px}
   .pgrid{display:grid;grid-template-columns:repeat(auto-fill,100px);gap:6px;overflow-y:auto;flex:1;align-content:start}.pc{background:var(--card);border:2px solid var(--border);border-radius:8px;padding:6px;text-align:center;cursor:pointer;transition:border-color .12s,transform .1s;user-select:none;width:100px;height:110px;display:flex;flex-direction:column;justify-content:space-between;box-sizing:border-box}
-  text-align:center;cursor:pointer;transition:border-color .12s,transform .1s;user-select:none}
 .pc:hover{border-color:var(--pri);transform:scale(.97)}
 .pn{font-size:10px;font-weight:700;line-height:1.2;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;flex:1}
 .pp{color:var(--pri);font-weight:700;font-size:12px}.ps{font-size:10px;color:var(--muted)}
@@ -338,12 +337,6 @@ input:focus,select:focus,textarea:focus{border-color:var(--pri)}
   #t-clientes.on,#t-productos.on,#t-inventario.on{
     overflow-y:auto !important;
     -webkit-overflow-scrolling:touch;
-    width:100% !important;
-    box-sizing:border-box !important;
-  }
-}
-
-   -webkit-overflow-scrolling:touch;
     width:100% !important;
     box-sizing:border-box !important;
   }
@@ -1046,6 +1039,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--pri)}
       </div>
     </div>
 
+
     <!-- CORTE -->
     <!-- PROVEEDORES -->
     <!-- MARKETING IA -->
@@ -1161,7 +1155,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--pri)}
     <button class="nac" onclick="document.getElementById('ninp').value='¿Stock bajo?';enviarNova()">Stock bajo</button>
     <button class="nac" onclick="document.getElementById('ninp').value='¿IVA SII?';enviarNova()">IVA</button>
     <button class="nac" onclick="document.getElementById('ninp').value='¿Deudas clientes?';enviarNova()">Deudas</button>
-  </div
+  </div>
   <div class="ninp">
     <input id="ninp" placeholder="Pregunta lo que necesites...">
     <button id="nenviar">▶</button>
@@ -1514,8 +1508,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--pri)}
   <div id="mp-img-preview" style="margin-top:6px;display:none">
     <img id="mp-img-tag" style="width:80px;height:80px;object-fit:cover;border-radius:8px;border:1px solid var(--border)">
     <button type="button" onclick="quitarImagenProducto()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:12px">✕ Quitar</button>
-  </div>
- <div class="fr" style="margin-bottom:8px"><div style="flex:1"><label style="font-size:11px;color:var(--muted);font-weight:700">🖼 Imagen del producto</label><div style="display:flex;gap:6px;margin-top:4px"><input id="mp-img" type="text" placeholder="Pega URL o busca automático" style="flex:1;padding:9px;border:2px solid var(--border);border-radius:8px;font-size:12px;background:var(--card)"><button type="button" onclick="previsualizarImg()" class="btn" style="white-space:nowrap;padding:9px 12px">👁</button><button type="button" onclick="buscarImagenProducto()" class="btn bg" style="white-space:nowrap;padding:9px 10px;font-size:11px">🔍 Auto</button></div><div id="mp-img-prev" style="margin-top:6px;display:none;align-items:center;gap:8px"><img id="mp-img-thumb" src="" style="height:60px;width:60px;object-fit:cover;border-radius:6px;border:1px solid var(--border)" onerror="this.style.opacity='0.3'"><button type="button" onclick="quitarImagenProducto()" style="background:none;border:none;color:var(--red);cursor:pointer;font-size:18px">✕</button></div></div></div>      <!-- GENERADOR DE CÓDIGO DE BARRAS INTERNO -->
+  </div>      <!-- GENERADOR DE CÓDIGO DE BARRAS INTERNO -->
 <div style="margin-top:10px;background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:10px">
   <div style="font-size:12px;font-weight:700;color:var(--hdr);margin-bottom:8px">🔲 Código de Barras Interno</div>
   <div style="display:flex;gap:6px;margin-bottom:8px">
@@ -2286,7 +2279,7 @@ function cargarProductosDefault() {
 function mostrarLogin() {
   el('fb-config-screen').style.display = 'none';
   el('login').style.display = 'flex';
-  setTimeout(function(){ var lu=el('lu'); if(lu) lu.focus(); }, 150);
+  setTimeout(function(){ var lu=el('l-user'); if(lu && lu.offsetParent) lu.focus(); }, 150);
   // Actualizar info Firebase en config
   var fi = el('fb-info-config');
   if (fi) {
@@ -2302,9 +2295,7 @@ function mostrarLogin() {
 var _loginIntentos = 0, _loginBloqueadoHasta = 0;
 window._sesionActiva = false;
 
-el('lbtn').onclick = function(){ doLogin(); };
-el('lu').onkeydown = function(e){ if(e.key==='Enter') el('lp').focus(); };
-el('lp').onkeydown = function(e){ if(e.key==='Enter') doLogin(); };
+// Login clasico eliminado — el flujo SaaS usa loginNeg()
 
 function doLogin() {
   var ahora2 = Date.now();
@@ -2396,18 +2387,22 @@ function _cerrarSesion() {
   window._sesionActiva = false; S.user = '';
   // Detener listeners Firebase
   if (_monitorActive && db) {
-    try { db.ref('posData/hist').off(); } catch(e){}
+    try {
+      db.ref('posData/hist').off();
+      if(_NEG) db.ref('negocios/'+_NEG.id+'/posData').off();
+      if(_NEG) db.ref('negocios/'+_NEG.id+'/posData/hist').off();
+    } catch(e){}
     _monitorActive = false;
-  }
-  // Firebase Auth signOut real — invalida la sesión en el servidor
+  }  // Firebase Auth signOut real — invalida la sesión en el servidor
   if (FB_MODE === 'firebase' && fbAuth) {
     fbAuth.signOut().catch(function(){});
   }
   // Limpiar pantalla
   el('app').style.display = 'none';
-  el('login').style.display = 'flex';
-  el('lu').value = ''; el('lp').value = '';
-  el('lerr').textContent = '';
+  ss('ss-login');
+  var luser = el('l-user'); if(luser) luser.value = '';
+  var lpass = el('l-pass'); if(lpass) lpass.value = '';
+  var lerr2 = el('l-err'); if(lerr2) lerr2.textContent = '';
   // Sincronizar dot
   var sdot = el('sync-indicator'); if(sdot) sdot.classList.remove('online');
 }
@@ -2986,13 +2981,13 @@ function confirmarCobro() {
   el('ticket-prev-contenido').innerHTML = generarHTMLTicket(venta);
   sonidoCobro();
   show('m-ticket-prev');
-  show('m-ticket-prev');
   // Resetear ticket activo
   tickets[ticketActivo].items=[];
   S.ticket=tickets[ticketActivo].items;
   if(tickets.length>1){ tickets.splice(ticketActivo,1); if(ticketActivo>=tickets.length)ticketActivo=tickets.length-1; S.ticket=tickets[ticketActivo].items; }
   renderTicketTabs(); renderTicket(); renderVentas();
 }
+
 
 // ================================================================
 // TICKET / BOLETA — IMPRESION DUAL
@@ -3093,6 +3088,22 @@ function imprimirTicket() {
     try{ w.close(); }catch(e2){}
     alert('Permite las ventanas emergentes en tu navegador.');
   }
+}
+  function compartirTicket() {
+  if (!_ticketActualData) return;
+  var v = _ticketActualData;
+  var cfg = S.cfg || {};
+  var txt = '*' + escH(cfg.nom || 'Vania POS') + '*\n';
+  txt += '🧾 Folio #' + v.folio + ' · ' + v.fecha + ' ' + v.hora + '\n';
+  txt += '━━━━━━━━━━━━━━━━━━━\n';
+  v.items.forEach(function(it) {
+    txt += '• ' + it.desc + ' x' + it.qty + ' → $' + (it.precio * it.qty).toLocaleString('es-CL') + '\n';
+  });
+  txt += '━━━━━━━━━━━━━━━━━━━\n';
+  txt += '*TOTAL: $' + Math.round(v.total || 0).toLocaleString('es-CL') + '*\n';
+  txt += 'Pago: ' + (v.pago || '-') + '\n';
+  txt += escH(cfg.msg || 'Gracias por su compra');
+  window.open('https://wa.me/?text=' + encodeURIComponent(txt), '_blank');
 }
 
 // ================================================================
@@ -3363,8 +3374,13 @@ function abrirProd(cod) {
   if(p.depto) dep.value=p.depto;
   if(p.tipo) el('mp-tip').value=p.tipo;
   el('mp-err').textContent='';
-  if(el('mp-img')){el('mp-img').value=p.img||'';if(p.img){el('mp-img-tag').src=p.img;el('mp-img-preview').style.display='flex';}else{el('mp-img-preview').style.display='none';}}
-  if(el('mp-img-url'))el('mp-img-url').value='';
+  if(el('mp-img-url'))el('mp-img-url').value=p.img||'';
+  if(p.img){
+    var imgTag=el('mp-img-tag'); if(imgTag) imgTag.src=p.img;
+    var imgPrev=el('mp-img-preview'); if(imgPrev) imgPrev.style.display='flex';
+  } else {
+    var imgPrev2=el('mp-img-preview'); if(imgPrev2) imgPrev2.style.display='none';
+  }
   show('m-prod'); setTimeout(function(){el('mp-cod').focus();},80);
 }
 
@@ -3442,17 +3458,17 @@ function aplicarMargen(){
 }
 
 function previsualizarImg(){
-  var url=(el('mp-img')||{value:''}).value.trim();
-  var prev=el('mp-img-prev');
-  var thumb=el('mp-img-thumb');
-  if(url&&prev&&thumb){thumb.src=url;prev.style.display='block';}
+  var url=(el('mp-img-url')||{value:''}).value.trim();
+  var prev=el('mp-img-preview');
+  var thumb=el('mp-img-tag');
+  if(url&&prev&&thumb){thumb.src=url;prev.style.display='flex';}
   else if(prev){prev.style.display='none';}
 }
 
 function guardarProd() {
   var cod=el('mp-cod').value.trim(), nom=el('mp-nom').value.trim();
   if(!cod||!nom){el('mp-err').textContent='Código y nombre obligatorios';return;}
-  var imgVal = el('mp-img') ? el('mp-img').value||'' : '';
+  var imgVal = el('mp-img-url') ? el('mp-img-url').value.trim()||'' : '';
   var data={
     cod:cod, desc:nom,
     costo:parseFloat(el('mp-cos').value)||0,
@@ -4010,6 +4026,7 @@ function cerrarQRFidelizacion() {
   _qrDescuento = 0;
   _qrListener = null;
 }
+
   // ================================================================
 // MÓDULO PROVEEDORES
 // ================================================================
@@ -4235,8 +4252,7 @@ function _renderProveedoresUI() {
   // Lista proveedores
   el('prov-lista').innerHTML = S.proveedores.length ? S.proveedores.map(function(p, i){
     var esHoy = esDiaVisita(p);
-  return '<div class="card" style="border-left:4px solid '+(esHoy?'#10b981':'var(--border)')+'">'+
-      +'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+  return '<div class="card" style="border-left:4px solid '+(esHoy?'#10b981':'var(--border)')+'">'+'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
       +'<div><div style="font-weight:700;font-size:14px">'+escH(p.compania)+'</div>'
       +'<div style="font-size:11px;color:var(--muted)">👤 '+escH(p.nombre)+(p.tel?' · 📱 '+escH(p.tel):'')+'</div></div>'
       +(esHoy?'<span style="background:#10b981;color:#fff;border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700">HOY</span>':'')
@@ -4715,7 +4731,6 @@ function mostrarToastEscaner(cod){
     document.body.appendChild(t);}
   sonidoError();
   t.textContent='⚠ Código no registrado: '+cod;
-  t.textContent='⚠ Código no registrado: '+cod;
   t.style.display='block';
   clearTimeout(_toastTimer);
   _toastTimer=setTimeout(function(){t.style.display='none';},2500);
@@ -5013,6 +5028,7 @@ function confirmarCierreTurno(){
   if(Math.abs(dif)>1000){
     if(!confirm('Hay una diferencia de '+fmt(Math.abs(dif))+'. ¿Confirmas el cierre de todas formas?')) return;
   }
+
 
   // Guardar historial del turno
   var turno={
@@ -5708,9 +5724,10 @@ function confirmarLoginAdmin() {
     _NEG=found.neg.info||{};
     _NEG._u=found.user.u;
     _NEG.id=found.nid;
+    _NEG._users=found.neg.users||{};
     S.userRol='admin';
     S.users=Object.values(found.neg.users||{});
-    _saveSession(found.nid,found.user.u);
+    _saveSesion(found.nid,found.user.u);
     entrarPos();
   }).catch(function(){el('admin-login-err').textContent='Error de conexión';});
 }
@@ -5899,8 +5916,7 @@ function _iniciarMonitorNeg(){
     S.hist=hist;actualizarMonitor();
     if(el('t-reportes').classList.contains('on'))renderReportes();
   });
-  var sdot=el('sync-dot');if(sdot)sdot.classList.add('on');
-}
+ var sdot=el('sync-indicator');if(sdot)sdot.classList.add('online');}
 
 function _setEstado(est){
   if(!_NEG||!db)return;
@@ -6025,6 +6041,7 @@ function iniciarSaaS(){
 
 function activarConCodigo(origen){var inputId=origen==='trial'?'trial-codigo':'bloq-codigo';var msgId=origen==='trial'?'trial-cod-msg':'bloq-cod-msg';var inp=document.getElementById(inputId);var msg=document.getElementById(msgId);var cod=(inp.value||'').trim().toUpperCase();if(!cod){msg.innerHTML='<span style="color:#f87171">Ingresa el código</span>';return;}if(!cod.match(/^VANIA-[A-Z0-9]{4}-[A-Z0-9]{4}$/)){msg.innerHTML='<span style="color:#f87171">Formato inválido</span>';return;}msg.innerHTML='<span style="color:#fbbf24">Verificando...</span>';if(!_NEG||!db){msg.innerHTML='<span style="color:#f87171">Error de conexión</span>';return;}db.ref('negocios/'+_NEG.id+'/info').once('value').then(function(snap){var info=snap.val();if(!info||info.code_used){msg.innerHTML='<span style="color:#f87171">Código inválido o ya usado</span>';return;}if(info.activation_code!==cod){msg.innerHTML='<span style="color:#f87171">Código incorrecto</span>';return;}var dias=info.code_dias||30;var venc=Date.now()+(dias*86400000);db.ref('negocios/'+_NEG.id+'/info').update({estado:'activo',vencimiento:venc,code_used:true,code_usado_en:Date.now()}).then(function(){msg.innerHTML='<span style="color:#10b981">✅ Activado por '+dias+' días</span>';_NEG.estado='activo';_NEG.vencimiento=venc;setTimeout(function(){entrarPos();},1500);}).catch(function(){msg.innerHTML='<span style="color:#f87171">Error al activar</span>';});}).catch(function(){msg.innerHTML='<span style="color:#f87171">Error de conexión</span>';});}
 
+
 // ================================================================
 // IMAGEN PRODUCTO — Open Food Facts + Google
 // ================================================================
@@ -6063,14 +6080,14 @@ function abrirGoogleImagenes(){
 }
 
 function setImagenProducto(url){
-  el('mp-img').value=url;
+  var urlInp=el('mp-img-url'); if(urlInp) urlInp.value=url;
   var prev=el('mp-img-preview');
   var tag=el('mp-img-tag');
   if(prev && tag){tag.src=url;prev.style.display='flex';} 
 }
 
 function quitarImagenProducto(){
-  el('mp-img').value='';
+  var urlInp=el('mp-img-url'); if(urlInp) urlInp.value='';
   var prev=el('mp-img-preview');
   if(prev) prev.style.display='none';
 }
@@ -6216,7 +6233,12 @@ document.addEventListener('click', function(e){
     }, 100);
   }
 });
-</script>
+</script> <script src="reporte-diario.js"></script><script src="vania-agentes.js"></script> 
+  <script src="orquestador.js"></script>
+<script src="agente-ticket.js"></script>
+<script src="agente-credito.js"></script>
+<script src="agente-stock.js"></script>
+<script src="agente-imagen.js"></script>
 
 <!-- ============ MODAL INGRESO GRANEL ============ -->
 <div class="mbg" id="m-ingreso-granel">
@@ -6254,7 +6276,6 @@ document.addEventListener('click', function(e){
     </div>
   </div>
 </div>
-
 
 <script>
 /* ====== TRAZABILIDAD GRANEL ====== */
@@ -6406,9 +6427,8 @@ setTimeout(function(){
       }, 60);
     };
   }
-}, 0);
-
-
+}, 0);</script>
+<script>
 // Función para ver catálogo del proveedor
 function verCatalogoProv(i) {
   var p = S.proveedores[i]; if(!p || !p.catalogo || !p.catalogo.length) return;
@@ -6515,9 +6535,8 @@ guardarProveedor = function() {
   renderProveedores();
   alert('✅ Proveedor guardado: '+comp);
 };
-
-
-
+</script>
+<script>
 // CURSOR SIEMPRE EN BUSCADOR
 function volverBuscador(){
   setTimeout(function(){
@@ -6550,17 +6569,6 @@ document.addEventListener('DOMContentLoaded',function(){
     }
   },3000);
 });
-
 </script>
-
-  <!-- AGENTES VANIA POS -->
-  <script src="reporte-diario.js"></script>
-  <script src="vania-agentes.js"></script>
-  <script src="orquestador.js"></script>
-  <script src="agente-ticket.js"></script>
-  <script src="agente-credito.js"></script>
-  <script src="agente-stock.js"></script>
-  <script src="agente-imagen.js"></script>
-
 </body>
 </html>
