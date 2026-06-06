@@ -3049,8 +3049,7 @@ function imprimirTicket() {
   var ancho=(S.cfg&&S.cfg.anchoTicket)||'56mm';
   var px=ancho==='80mm'?'302px':'216px';
   var fs=ancho==='80mm'?'11px':'10px';
-  var estilos='@page{size:'+ancho+' auto;margin:1mm 2mm}'
-    +'*{box-sizing:border-box!important}'
+ var estilos='@page{size:'+ancho+' auto;margin:1mm 2mm}'+'body{display:flex;justify-content:center;align-items:flex-start}'    +'*{box-sizing:border-box!important}'
     +'body{font-family:"Courier New",Courier,monospace;font-size:'+fs+';line-height:1.4;margin:0;padding:2mm;color:#000;background:#fff;width:'+px+';max-width:'+px+'}'
     +'div{max-width:100%!important;width:auto!important}'
     +'span{display:inline-block;overflow:hidden}'
