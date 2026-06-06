@@ -2113,7 +2113,7 @@ function usarModoLocal() {
 function cargarDatosFirebase(cb) {
   if (!db) { load(); if(cb)cb(); return; }
   setFbStatus('⬇ Cargando...', 'rgba(245,158,11,.8)');
-  db.ref('posData').once('value').then(function(snap){
+ db.ref(_NEG ? 'negocios/'+_NEG.id+'/posData' : 'posData').once('value').then(function(snap){
     var data = snap.val();
     if (data) {
       if (data.prods && data.prods.length > 0) S.prods = data.prods;
