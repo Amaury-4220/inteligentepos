@@ -2557,8 +2557,7 @@ function renderVentas() {
     var stockStyle = agotado ? 'color:#ef4444;font-weight:700' : '';
     var cardStyle  = agotado ? 'opacity:.45;filter:grayscale(.7)' : '';
     var imgHtml    = p.img ? ('<img src="'+p.img+'" style="width:100%;height:42px;object-fit:cover;border-radius:4px;margin-bottom:2px" onerror="this.remove()">') : '';
-    return '<div class="pc" data-cod="'+escH(p.cod)+'" style="'+cardStyle+'">'
-      +imgHtml
+   return '<div class="pc" data-cod="'+escH(p.cod)+'" style="'+cardStyle+';position:relative">'+(agotado?'<div style="position:absolute;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:28px;color:#ef4444;font-weight:900;pointer-events:none;z-index:2">✕</div>':'')      +imgHtml
       +'<div class="pn">'+escH(p.desc)+gr+'</div>'
       +'<div class="pp">'+fmt(p.venta)+(p.granel?'/kg':'')+'</div>'
       +'<div class="ps" style="'+stockStyle+'">'+stockTxt+'</div></div>';
