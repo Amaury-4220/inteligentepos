@@ -2011,8 +2011,7 @@ var S = {
 // UTILIDADES
 // ================================================================
 function fmt(v) { return '$' + Math.round(v||0).toLocaleString('es-CL'); }
-function hoy() { return new Date().toLocaleDateString('es-CL'); }
-function ahora_() { return new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
+function hoy() { var d=new Date(); return d.toLocaleDateString('es-CL',{timeZone:'America/Santiago'}); }function ahora_() { return new Date().toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}); }
 function el(id) { return document.getElementById(id); }
 function show(id) { var e=el(id); if(e) e.classList.add('on'); }
 function hide(id) { var e=el(id); if(e) e.classList.remove('on'); }
