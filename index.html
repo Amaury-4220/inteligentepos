@@ -3041,7 +3041,7 @@ function generarHTMLTicket(venta) {
   t+=center('vaniapos.cl')+NL;
   t+=NL+NL;
   var esc=t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  return '<pre style="font-family:monospace;font-size:12px;font-weight:700;line-height:1.5;color:#000;background:#fff;margin:0;padding:4px 2px;white-space:pre;width:210px;max-width:210px;overflow:hidden;display:block">'+esc+'</pre>';
+return '<pre style="font-family:monospace;font-size:12px;font-weight:700;line-height:1.5;color:#000;background:#fff;margin:0 auto;padding:4px 2px;white-space:pre;width:210px;max-width:210px;overflow:hidden;display:block;text-align:left">'+esc+'</pre>';
 }
 
 function imprimirTicket() {
